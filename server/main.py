@@ -1,9 +1,6 @@
 from fastapi import FastAPI
+import routers
 
-app = FastAPI()
+app = FastAPI(swagger_ui_parameters={"defaultModelsExpandDepth": 0})
 
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
+app.include_router(routers.router)
