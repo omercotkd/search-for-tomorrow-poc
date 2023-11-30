@@ -4,8 +4,8 @@ import {useState} from "react";
 import {Button, Form, Input, message, Modal, Table} from "antd";
 import * as axios from "axios";
 export const DocumentPage = () => {
-    const [searchText, setSearchText] = useState('');
-    const [dataSource, setDataSource] = useState([]);
+    const [searchText, setSearchText] = useState<string>('');
+    const [dataSource, setDataSource] = useState<any>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const columns = [
@@ -58,7 +58,7 @@ export const DocumentPage = () => {
         setIsModalVisible(true);
     };
 
-    const handleOk = (values) => {
+    const handleOk = (values:any) => {
         // Implement your insert logic here
         // Add a new document to the dataSource with the provided values
         setDataSource([...dataSource, { ...values, id: dataSource.length + 1 }]);
@@ -94,7 +94,7 @@ export const DocumentPage = () => {
 
             <Modal
                 title="Insert Document"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleOk}
                 onCancel={handleCancel}
             >
