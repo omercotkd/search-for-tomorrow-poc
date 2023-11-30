@@ -4,14 +4,8 @@ from server.interfaces.interfaces import CreateDocumentPayload, SearchQuery
 
 router = APIRouter()
 
-@router.post("/document")
-def create_document(
-        request: Request,
-        payload: CreateDocumentPayload
-):
-    # TODO create document
-    return {"message": "create document"}
 
+## Will use it for many and one document as well - same process just one element [doc]
 @router.post("/document/bulk")
 def create_documents(
         request: Request,
