@@ -1,22 +1,29 @@
 'use client';
 
 import {useState} from "react";
-import {Button, FloatButton, Form, Input, List, message, Modal, Table} from "antd";
+import {Button, FloatButton, Form, Input, List, message, Modal, Slider, Table} from "antd";
 import axios from "axios";
 import {PlusCircleOutlined, SearchOutlined} from "@ant-design/icons";
+import TextArea from "antd/es/input/TextArea";
 
 interface ListProps {
     dataList :any;
 }
+
 const MyListComponent = (props:ListProps) => {
     const {dataList} = props
     return (
         <List
             itemLayout="horizontal"
             dataSource={dataList}
-            renderItem={(item:{title:string,content:string}) => (
+            renderItem={(item:{title:string,content:string,dist:number}) => (
                 <List.Item>
+
                     <List.Item.Meta
+                        avatar={
+                            // @ts-ignore
+                            <div>{item.dist.toFixed(2) * 100 }%</div>
+                        }
                         title={item.title}
                         description={item.content}
                     />
@@ -30,16 +37,19 @@ export const DocumentPage = () => {
     const [searchText, setSearchText] = useState<string>('');
     const [dataSource, setDataSource] = useState<any>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [threshold, setThreshold] = useState(0.9);
 
-    const handleSearch = (value:string ) => {
+    const handleTextChange = (e) => {
+        setSearchText(e.target.value);
+    };
+
+    const handleSearch = () => {
         // Implement your search logic here
         // You can filter the dataSource based on the search text
-        setSearchText(value);
-
 
         try {
             // Make an HTTP POST request to your backend API
-             axios.get('http://localhost:5000/search', {params : {text : value,threshold:0.9 }})
+             axios.get('http://localhost:5000/search', {params : {text :searchText ,threshold:threshold }})
                  .then((response => {
                  // Update the dataSource with the search results
                  setDataSource(response.data["docs"]);
@@ -69,19 +79,40 @@ export const DocumentPage = () => {
     };
 
 
+    const onChange = (newValue:number) => {
+        setThreshold(newValue);
+    };
+    const marks = {
+        0.8: '0.8',
+        0.9: '0.9',
+        0.95: '0.95'
+    };
+
     return (
 
         <div style={{ padding: '20px',alignItems:"center" }}>
             <h1 style={{ marginBottom: '20px' }}>היוזמות לטיפול</h1>
             <div style={{ marginBottom: '16px' }}>
-                <Input.Search
-                    size={'large'}
-                    style={{width : 500}}
+
+                <Input.TextArea
                     placeholder="Search documents"
-                    onSearch={handleSearch}
-                    enterButton
+                    style={{width : 500,height:200}}
+                    rows={4}
+                    value={searchText}
+                    onChange={handleTextChange}
                 />
 
+                <Button icon={<SearchOutlined/>} type={"primary"} onClick={handleSearch}></Button>
+            </div>
+            <div>
+                <Slider defaultValue={threshold}
+                        style={{width:500}}
+                        min={0.8}
+                        max={0.95}
+                        step={0.01}
+                        marks={marks}
+                        value={typeof threshold === 'number' ? threshold : 0}
+                        onChange={onChange} />
             </div>
 
             <MyListComponent dataList={dataSource}></MyListComponent>

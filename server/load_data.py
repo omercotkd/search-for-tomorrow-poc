@@ -2,10 +2,10 @@ from etl.n12 import N12Document
 from etl.nafshi import NafshiDocument
 import json
 
-with open("/Users/omer/Downloads/nafshi.json") as f:
+with open("/Users/lnachman/Documents/search-for-tomorrow-poc/nafshi.json") as f:
     nafshi_data = json.load(f)["items"]
 
-with open("/Users/omer/Downloads/n12.json") as f:
+with open("/Users/lnachman/Documents/search-for-tomorrow-poc/n12.json") as f:
     n12_data = json.load(f)
 
 
