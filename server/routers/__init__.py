@@ -1,13 +1,17 @@
 import os
 
-from fastapi import APIRouter, Depends ,Request
+from fastapi import APIRouter, Depends,Request
 
-from server.interfaces.interfaces import CreateDocumentPayload, SearchQuery
-from server.redis import RedisStorageVector
+from server.interfaces import CreateDocumentPayload, SearchQuery
+from server.redis_embedding import RedisStorageVector
+
+from ENV_VARIABLES import REDIS_URI
 
 router = APIRouter()
 
-redisEmbeddingClient = RedisStorageVector(redis_uri=os.getenv("REDIS_URI"))
+print(os.getenv("REDIS_URI"))
+
+redis_embedding_client = RedisStorageVector(redis_uri=os.getenv("REDIS_URI"))
 
 ## Will use it for many and one document as well - same process just one element [doc]
 @router.post("/document/bulk")
@@ -21,7 +25,7 @@ def create_documents(
 
     ## save on redis
 
-    redisEmbeddingClient.load(payload)
+    redis_embedding_client.load(payload)
 
     return {"message": "create documents"}
 
@@ -29,7 +33,7 @@ def create_documents(
 def search_documents(request: Request, query: SearchQuery = Depends()):
     # TODO search documents
 
-    docs = redisEmbeddingClient.find_similarity_documents(question=query.text, threshold=query.threshold)
+    docs = redis_embedding_client.find_similarity_documents(question=query.text, threshold=query.threshold)
     print(docs)
 
     return {"docs": docs}
