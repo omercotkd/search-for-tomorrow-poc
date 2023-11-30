@@ -32,6 +32,7 @@ def create_documents(
 @router.get("/search")
 def search_documents(request: Request, query: SearchQuery = Depends()):
     # TODO search documents
+    print(query.text)
     docs = redis_embedding_client.find_similarity_documents(question=query.text, threshold=query.threshold)
     print(docs)
 

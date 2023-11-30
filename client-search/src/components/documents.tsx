@@ -1,40 +1,31 @@
 'use client';
 
 import {useState} from "react";
-import {Button, Form, Input, message, Modal, Table} from "antd";
-import * as axios from "axios";
+import {Button, FloatButton, Form, Input, List, message, Modal, Table} from "antd";
+import axios from "axios";
+import {PlusCircleOutlined, SearchOutlined} from "@ant-design/icons";
+
+const MyListComponent = ({dataList}) => {
+    return (
+        <List
+            itemLayout="horizontal"
+            dataSource={dataList}
+            renderItem={item => (
+                <List.Item>
+                    <List.Item.Meta
+                        title={item.title}
+                        description={item.content}
+                    />
+                </List.Item>
+            )}
+        />
+    );
+};
+
 export const DocumentPage = () => {
     const [searchText, setSearchText] = useState<string>('');
     const [dataSource, setDataSource] = useState<any>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const columns = [
-        {
-            title: 'Document ID',
-            dataIndex: 'id',
-            key: 'id',
-        },
-        {
-            title: 'Title',
-            dataIndex: 'title',
-            key: 'title',
-        },
-        {
-            title: 'Description',
-            dataIndex: 'description',
-            key: 'description',
-        },
-        {
-            title: 'Location',
-            dataIndex: 'location',
-            key: 'location',
-        },
-        {
-            title: 'Contact Info',
-            dataIndex: 'contactInfo',
-            key: 'contactInfo',
-        },
-    ];
 
     const handleSearch = (value:string ) => {
         // Implement your search logic here
@@ -42,16 +33,19 @@ export const DocumentPage = () => {
         setSearchText(value);
 
 
-        // try {
-        //     // Make an HTTP POST request to your backend API
-        //     const response = await axios.get('http://localhost:8000/api/search', {params : {text : value }});
-        //
-        //     // Update the dataSource with the search results
-        //     setDataSource(response.data);
-        //   } catch (error) {
-        //     console.error(error);
-        //     // Handle error
-        //   }
+        try {
+            // Make an HTTP POST request to your backend API
+             axios.get('http://localhost:5000/search', {params : {text : value }})
+                 .then((response => {
+                 // Update the dataSource with the search results
+                 setDataSource(response.data["docs"]);
+             }));
+
+
+          } catch (error) {
+            console.error(error);
+            // Handle error
+          }
     };
 
     const handleInsert = () => {
@@ -70,27 +64,24 @@ export const DocumentPage = () => {
         setIsModalVisible(false);
     };
 
-    return (
-        <div style={{ padding: '20px' }}>
-            <h1 style={{ marginBottom: '20px' }}>היוזמות לטיפול</h1>
 
+    return (
+
+        <div style={{ padding: '20px',alignItems:"center" }}>
+            <h1 style={{ marginBottom: '20px' }}>היוזמות לטיפול</h1>
             <div style={{ marginBottom: '16px' }}>
                 <Input.Search
+                    size={'large'}
+                    style={{width : 500}}
                     placeholder="Search documents"
                     onSearch={handleSearch}
                     enterButton
                 />
-                <Button type="primary" style={{ marginLeft: '16px' }} onClick={handleInsert}>
-                    Insert Document
-                </Button>
+
             </div>
 
-            <Table
-                dataSource={dataSource}
-                columns={columns}
-                pagination={{ pageSize: 10 }}
-                rowKey="id"
-            />
+            <MyListComponent dataList={dataSource}></MyListComponent>
+
 
             <Modal
                 title="Insert Document"
@@ -142,6 +133,9 @@ export const DocumentPage = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+            <FloatButton icon={<PlusCircleOutlined />} onClick={handleInsert} type="primary" style={{ right: 24 }} />
         </div>
+
+
     );
 };
