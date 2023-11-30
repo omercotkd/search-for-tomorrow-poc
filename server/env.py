@@ -20,6 +20,7 @@ class Environment(str, Enum):
 class EnvVariables(BaseSettings):
     ENVIRONMENT: Environment = Environment.LOCAL
     MONGO_URI: str = "mongodb://localhost:27017"
+    REDIS_URI: str = 'redis://localhost:6379'
 
 
 ENV_VARIABLES = EnvVariables(_env_file=".env", _env_file_encoding="utf-8")
