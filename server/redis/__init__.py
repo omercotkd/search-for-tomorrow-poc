@@ -15,7 +15,7 @@ class RedisStorageVector(ABC):
     def __init__(self, redis_uri=None):
         self.prefix = 'documents:'
         self.redis_client = redis.Redis.from_url(url=redis_uri)
-        self.dim = 512
+        self.dim = 768
         self.index_name = 'documents:index'
         self.embedding_model = SentenceTransformer('sentence-transformers/quora-distilbert-multilingual')
         self.VECTOR_FIELD_NAME = 'embedding'
