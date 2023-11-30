@@ -36,7 +36,7 @@ export const DocumentPage = () => {
         },
     ];
 
-    const handleSearch = (value) => {
+    const handleSearch = (value:string ) => {
         // Implement your search logic here
         // You can filter the dataSource based on the search text
         setSearchText(value);
