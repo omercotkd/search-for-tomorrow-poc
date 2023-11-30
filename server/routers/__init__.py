@@ -1,12 +1,10 @@
-import json
-import os
-
-from fastapi import APIRouter, Depends,Request
+from fastapi import APIRouter, Depends, Request
 from pydantic.v1.json import pydantic_encoder
 
-from server.interfaces import CreateDocumentPayload, SearchQuery
-from server.redis_embedding import RedisStorageVector
+from interfaces import CreateDocumentPayload, SearchQuery
+from redis_embedding import RedisStorageVector
 from env import ENV_VARIABLES
+from db.models import Document
 
 router = APIRouter()
 redis_embedding_client = RedisStorageVector(redis_uri=ENV_VARIABLES.REDIS_URI)
@@ -14,8 +12,8 @@ redis_embedding_client = RedisStorageVector(redis_uri=ENV_VARIABLES.REDIS_URI)
 ## Will use it for many and one document as well - same process just one element [doc]
 @router.post("/document/bulk")
 def create_documents(
-        request: Request,
-        payload: list[CreateDocumentPayload]
+    request: Request,
+    payload: list[CreateDocumentPayload]
 ):
     # TODO create documents
 
@@ -40,11 +38,9 @@ def search_documents(request: Request, query: SearchQuery = Depends()):
 
 @router.put("/load")
 def load_documents_to_redis():
-    # TODO load documents to redis
 
-    # query mongodb , take all documents collections
+    documents = Document.find()
 
-    # then do flush on redis
+    redis_embedding_client.load([item.model_dump() for item in documents])
 
-    # call redisEmbeddingClient.load(documents from collection)
     return {"message": "load documents to redis"}

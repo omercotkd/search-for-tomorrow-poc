@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 from env import ENV_VARIABLES
-
+from typing_extensions import Self
 
 DB = pymongo.MongoClient(ENV_VARIABLES.MONGO_URI)[ENV_VARIABLES.DB_NAME]
 
@@ -31,7 +31,7 @@ class DBModel(BaseModel):
 
         return self.model_dump(by_alias=True, exclude=exclude)
 
-    def save(self) -> "DBModel":
+    def save(self) -> "Self":
         if self.id is None:
             self.id = (
                 DB[self.collection_name()].insert_one(self._to_db_model()).inserted_id
@@ -41,3 +41,11 @@ class DBModel(BaseModel):
                 {"_id": self.id}, {"$set": self._to_db_model()}
             )
         return self
+
+    @classmethod
+    def find(cls, *args, **kwargs) -> list["Self"]:
+
+        results = list(DB[cls.collection_name()].find(*args, **kwargs))
+
+        return [cls(**item) for item in results]
+    
