@@ -1,11 +1,11 @@
 from fastapi import Query
 from pydantic import BaseModel, Field
-
+from typing import Optional
 
 class Document(BaseModel):
     title: str
     content: str
-    dist: float
+    dist: Optional[float] = Field(None)
 
 
 class CreateDocumentPayload(Document, BaseModel):

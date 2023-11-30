@@ -42,7 +42,7 @@ class RedisStorageVector(ABC):
         self.create_schema_redis()
 
         for document in documents:
-            record_key = self.generate_record_key(document.__getattribute__(self.TITLE_FIELD_NAME))
+            record_key = self.generate_record_key(document[self.TITLE_FIELD_NAME])
             document[self.VECTOR_FIELD_NAME] = self.embedding_document(document)
             self.redis_client.hset(record_key,
                                    mapping={
@@ -64,7 +64,8 @@ class RedisStorageVector(ABC):
             res = self.redis_client.ft(self.index_name).search(q,
                                                                query_params={'vec_param': image_vector.tobytes()})
             if len(res.docs) > 0:
-                docs = list(map(self.convert_doc, docs))
+                converted_docs = [self.convert_doc(doc) for doc in res.docs]
+                docs = converted_docs
         else:
             logging.error(image_vector, threshold)
 
@@ -75,8 +76,11 @@ class RedisStorageVector(ABC):
 
     def convert_doc(self, doc: Document):
         dist = float(doc["dist"]) if float(doc["dist"]) > 1e-5 else 0
-        return {"dist": 1 - dist, [self.TITLE_FIELD_NAME]: doc[self.TITLE_FIELD_NAME],
-                [self.CONTENT_FIELD_NAME]: doc[self.CONTENT_FIELD_NAME]}
+        return {
+                "dist": 1 - dist,
+                self.TITLE_FIELD_NAME: doc[self.TITLE_FIELD_NAME],
+                self.CONTENT_FIELD_NAME: doc[self.CONTENT_FIELD_NAME]
+                }
 
     def generate_record_key(self, title: str):
         return f"{self.prefix}:{title}"
