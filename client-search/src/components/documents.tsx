@@ -5,12 +5,16 @@ import {Button, FloatButton, Form, Input, List, message, Modal, Table} from "ant
 import axios from "axios";
 import {PlusCircleOutlined, SearchOutlined} from "@ant-design/icons";
 
-const MyListComponent = ({dataList}) => {
+interface ListProps {
+    dataList :any;
+}
+const MyListComponent = (props:ListProps) => {
+    const {dataList} = props
     return (
         <List
             itemLayout="horizontal"
             dataSource={dataList}
-            renderItem={item => (
+            renderItem={(item:{title:string,content:string}) => (
                 <List.Item>
                     <List.Item.Meta
                         title={item.title}
@@ -35,7 +39,7 @@ export const DocumentPage = () => {
 
         try {
             // Make an HTTP POST request to your backend API
-             axios.get('http://localhost:5000/search', {params : {text : value }})
+             axios.get('http://localhost:5000/search', {params : {text : value,threshold:0.9 }})
                  .then((response => {
                  // Update the dataSource with the search results
                  setDataSource(response.data["docs"]);
