@@ -20,6 +20,7 @@ class Environment(str, Enum):
 class EnvVariables(BaseSettings):
     ENVIRONMENT: Environment = Environment.LOCAL
     MONGO_URI: str = "mongodb://localhost:27017"
+    DB_NAME: str = "search_engine"
     REDIS_URI: str = 'redis://localhost:6379'
 
 
