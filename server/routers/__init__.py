@@ -4,12 +4,11 @@ from fastapi import APIRouter, Depends,Request
 
 from server.interfaces import CreateDocumentPayload, SearchQuery
 from server.redis_embedding import RedisStorageVector
-
-from ENV_VARIABLES import REDIS_URI
+from env import ENV_VARIABLES
 
 router = APIRouter()
 
-print(os.getenv("REDIS_URI"))
+print(ENV_VARIABLES.REDIS_URI)
 
 redis_embedding_client = RedisStorageVector(redis_uri=os.getenv("REDIS_URI"))
 
