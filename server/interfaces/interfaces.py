@@ -15,6 +15,7 @@ class CreateDocumentPayload(Document, BaseModel):
 
 class SearchQuery(BaseModel):
     text: str = Query(..., example="sushi")
+    threshold: float = Query(0.85, examples="0~1 threshold , 1 - close semantic , 0 - not close semantic")
 
 
 class SearchResponse(BaseModel):

@@ -11,10 +11,10 @@ from sentence_transformers import SentenceTransformer, util
 from server.interfaces.interfaces import Document
 
 
-class RedisStorageVectorProvider(ABC):
-    def __init__(self, redis_url=None):
+class RedisStorageVector(ABC):
+    def __init__(self, redis_uri=None):
         self.prefix = 'documents:'
-        self.redis_client = redis.Redis.from_url(url=redis_url)
+        self.redis_client = redis.Redis.from_url(url=redis_uri)
         self.dim = 512
         self.index_name = 'documents:index'
         self.embedding_model = SentenceTransformer('sentence-transformers/quora-distilbert-multilingual')
@@ -51,7 +51,7 @@ class RedisStorageVectorProvider(ABC):
                                        self.CONTENT_FIELD_NAME: document[self.CONTENT_FIELD_NAME]
                                    })
 
-    def find_similarity_all_documents(self, question: str, threshold: float):
+    def find_similarity_documents(self, question: str, threshold: float):
         docs: List[Document] = []
 
         image_vector = self.embedding(text=question)
