@@ -8,7 +8,7 @@ from redis.commands.search.field import VectorField, TagField
 from redis.commands.search.query import Query
 from sentence_transformers import SentenceTransformer, util
 
-from server.interfaces import Document
+from interfaces import Document
 
 
 class RedisStorageVector(ABC):
