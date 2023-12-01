@@ -98,6 +98,7 @@ export const DocumentPage = () => {
                     placeholder="Search documents"
                     style={{width : 500,height:200}}
                     rows={4}
+                    onPressEnter={handleSearch}
                     value={searchText}
                     onChange={handleTextChange}
                 />
