@@ -6,7 +6,7 @@ import numpy as np
 import redis
 from redis.commands.search.field import VectorField, TagField
 from redis.commands.search.query import Query
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer, util, CrossEncoder
 
 from interfaces import Document
 
@@ -21,6 +21,8 @@ class RedisStorageVector(ABC):
         self.VECTOR_FIELD_NAME = 'embedding'
         self.TITLE_FIELD_NAME = 'title'
         self.CONTENT_FIELD_NAME = 'content'
+        #The bi-encoder will retrieve 100 documents. We use a cross-encoder, to re-rank the results list to improve the quality
+        self.cross_encoder = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 
     def create_schema_redis(self):
         schema = (VectorField(self.VECTOR_FIELD_NAME, "FLAT",
